@@ -1,4 +1,4 @@
-Mysql database setup :
+#Mysql database setup :
 
 CREATE DATABASE student_db;
 USE student_db;
@@ -10,7 +10,7 @@ CREATE TABLE students (
     grade VARCHAR(10)
 );
 
-Python Code :
+#Python Code :
 
 import mysql.connector
 def connect_db():
