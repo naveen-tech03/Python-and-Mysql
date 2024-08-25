@@ -1,0 +1,98 @@
+Mysql database setup :
+
+CREATE DATABASE student_db;
+USE student_db;
+
+CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    age INT,
+    grade VARCHAR(10)
+);
+
+Python Code :
+
+import mysql.connector
+def connect_db():
+    return mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="your_password",
+        database="student_db"
+    )
+
+def add_student(name, age, grade):
+    conn = connect_db()
+    cursor = conn.cursor()
+    query = "INSERT INTO students (name, age, grade) VALUES (%s, %s, %s)"
+    cursor.execute(query, (name, age, grade))
+    conn.commit()
+    print(f"Student '{name}' added successfully!")
+    cursor.close()
+    conn.close()
+
+def view_students():
+    conn = connect_db()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM students")
+    students = cursor.fetchall()
+    for student in students:
+        print(f"ID: {student[0]}, Name: {student[1]}, Age: {student[2]}, Grade: {student[3]}")
+    cursor.close()
+    conn.close()
+
+# Update student information
+def update_student(student_id, name=None, age=None, grade=None):
+    conn = connect_db()
+    cursor = conn.cursor()
+    query = "UPDATE students SET name = %s, age = %s, grade = %s WHERE id = %s"
+    cursor.execute(query, (name, age, grade, student_id))
+    conn.commit()
+    print(f"Student ID '{student_id}' updated successfully!")
+    cursor.close()
+    conn.close()
+
+def delete_student(student_id):
+    conn = connect_db()
+    cursor = conn.cursor()
+    query = "DELETE FROM students WHERE id = %s"
+    cursor.execute(query, (student_id,))
+    conn.commit()
+    print(f"Student ID '{student_id}' deleted successfully!")
+    cursor.close()
+    conn.close()
+
+def menu():
+    while True:
+        print("\n--- Student Management System ---")
+        print("1. Add Student")
+        print("2. View Students")
+        print("3. Update Student")
+        print("4. Delete Student")
+        print("5. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            name = input("Enter student name: ")
+            age = input("Enter student age: ")
+            grade = input("Enter student grade: ")
+            add_student(name, int(age), grade)
+        elif choice == '2':
+            view_students()
+        elif choice == '3':
+            student_id = input("Enter student ID to update: ")
+            name = input("Enter new name (leave blank to skip): ") or None
+            age = input("Enter new age (leave blank to skip): ") or None
+            grade = input("Enter new grade (leave blank to skip): ") or None
+            update_student(int(student_id), name, age, grade)
+        elif choice == '4':
+            student_id = input("Enter student ID to delete: ")
+            delete_student(int(student_id))
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    menu()
